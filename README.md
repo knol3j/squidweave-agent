@@ -1,6 +1,6 @@
 # SQUIDWEAVE provider agent
 
-Open-source scripts that let you rent out an idle **NVIDIA GPU** on [SQUIDWEAVE](https://gputestnet.squidweave.com/testnet?src=github), a peer-to-peer GPU marketplace that pays providers in **USDC on Base**. Renter payments sit in escrow until the job is done.
+Open-source scripts that let you rent out an idle **NVIDIA, AMD, or Intel GPU** on [SQUIDWEAVE](https://gputestnet.squidweave.com/testnet?src=github), a peer-to-peer GPU marketplace that pays providers in **USDC on Base**. Renter payments sit in escrow until the job is done.
 
 > **Testnet is open.** We're looking for the first 20 provider nodes. The testnet runs on **Base Sepolia with free test USDC**: no real money, no wallet funding needed.
 >
@@ -14,14 +14,26 @@ Every script here is short, plain, and has no dependencies, so you can read exac
 
 | File | What it does |
 | --- | --- |
-| `squidweave-verify.sh` / `.ps1` / `_verify.py` | **One-time hardware check.** Reads GPU name, VRAM, and UUID from `nvidia-smi`, plus CPU cores and RAM, and sends them once so your listing shows verified specs. |
-| `squidweave-agent.sh` / `.ps1` / `_agent.py` | **Heartbeat agent.** Every 60 seconds it sends GPU utilization and temperature so renters can see the machine is online. |
+| `squidweave-verify.sh` / `.ps1` / `_verify.py` | **One-time hardware check.** Reads each GPU's name, VRAM, and ID straight from the driver, plus CPU cores and RAM, and sends them once so your listing shows verified specs. You never type your specs in. |
+| `squidweave-agent.sh` / `.ps1` / `_agent.py` | **Heartbeat agent.** Every 60 seconds it sends GPU load, temperature, and GPU IDs so renters can see the machine is online and the listed cards are the ones running. |
 
 What the scripts **do not** do: they don't open ports, install anything, read your files, or send anything other than the fields above. Check the source yourself.
 
+## Supported GPUs
+
+| Maker | Where the specs come from | ID used |
+| --- | --- | --- |
+| NVIDIA | `nvidia-smi` (comes with the NVIDIA driver) | Card serial UUID |
+| AMD on Linux | The `amdgpu` driver (`/sys/class/drm`) | Card unique ID, or its PCI slot if the driver doesn't expose one |
+| AMD on Windows | Windows device list + Adrenalin/PRO driver | PCI slot |
+| Intel on Linux | `xpu-smi` (Intel XPU Manager) | Card UUID |
+| Intel on Windows | Windows device list + Arc driver | PCI slot |
+
+Cards with less than 4 GB of memory (built-in graphics) are skipped. Machines with mixed GPU models can't be listed together yet. Renters see which software a card runs (CUDA for NVIDIA, ROCm for AMD, oneAPI for Intel) on the listing page.
+
 ## Requirements
 
-- An **NVIDIA GPU** with the driver installed (`nvidia-smi` must work). AMD and Apple GPUs aren't supported yet.
+- A supported GPU with its driver installed (see above).
 - One of: bash + curl (Linux/macOS), PowerShell 5+ (Windows 10/11), or Python 3.8+.
 - An always-on internet connection.
 
@@ -46,6 +58,8 @@ What the scripts **do not** do: they don't open ports, install anything, read yo
    ```
 
 5. Set your hourly price on the website. Your node shows as **live** on the marketplace.
+
+If you swap, add, or remove a card, the agent reports a hardware mismatch and the machine goes offline until you run the hardware check again.
 
 ### Keep it running on Linux (optional)
 
