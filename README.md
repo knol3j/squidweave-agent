@@ -5,6 +5,8 @@ Open-source scripts that let you rent out an idle **NVIDIA GPU** on [SQUIDWEAVE]
 > **Testnet is open.** We're looking for the first 20 provider nodes. The testnet runs on **Base Sepolia with free test USDC**: no real money, no wallet funding needed.
 >
 > **Join here:** https://gputestnet.squidweave.com/testnet?src=github
+>
+> **Discord (setup help and bug reports):** https://discord.gg/6dRvjvR3ar
 
 Every script here is short, plain, and has no dependencies, so you can read exactly what runs on your machine before you start it.
 
@@ -74,7 +76,7 @@ sudo systemctl enable --now squidweave-agent
 
 ## Feedback
 
-Testnet testers shape the product. Open an issue here, or use the feedback button inside the app. Bug reports, pricing opinions, and "this step confused me" are all useful.
+Testnet testers shape the product. Join the [Discord](https://discord.gg/6dRvjvR3ar), open an issue here, or use the feedback button inside the app. Bug reports, pricing opinions, and "this step confused me" are all useful.
 
 ## License
 
